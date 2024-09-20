@@ -1,14 +1,9 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
-}
+use std::fs::File as StdFile;
+use std::io::Write;
+use std::path::{Path, PathBuf};
+use std::str::FromStr;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+use tempfile::NamedTempFile;
+use uuid::Uuid;
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}
+const UPDATE_FILES_PATH: &str = "updates/updates_files";
