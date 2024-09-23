@@ -140,3 +140,21 @@ impl File {
         Ok(())
     }
 }
+
+impl Write for File {
+    fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
+        if let Some(file) = self.file.as_mut() {
+            file.write(buf)
+        } else {
+            Ok(buf.len())
+        }
+    }
+
+    fn flush(&mut self) -> std::io::Result<()> {
+        if let Some(file) = self.file.as_mut() {
+            file.flush()
+        } else {
+            Ok(())
+        }
+    }
+}
