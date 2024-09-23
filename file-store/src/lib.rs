@@ -119,3 +119,24 @@ impl FileStore {
         }))
     }
 }
+
+pub struct File {
+    path: PathBuf,
+    file: Option<NamedTempFile>,
+}
+
+impl File {
+    pub fn dry_file() -> Result<Self> {
+        Ok(Self {
+            path: PathBuf::new(),
+            file: None,
+        })
+    }
+
+    pub fn persist(self) -> Result<()> {
+        if let Some(file) = self.file {
+            file.persist(&self.path)?;
+        }
+        Ok(())
+    }
+}
