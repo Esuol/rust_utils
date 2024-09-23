@@ -1,8 +1,9 @@
-use std::{error, fs};
+use std::fmt::Result;
 use std::fs::File as StdFile;
 use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
+use std::{error, fs};
 
 use tempfile::NamedTempFile;
 use uuid::Uuid;
@@ -84,5 +85,37 @@ impl FileStore {
         dst.push(uuid.to_string());
         std::fs::copy(src, dst)?;
         Ok(())
+    }
+
+    pub fn compute_size(&self, uuid: Uuid) -> Result<u64> {
+        Ok(self.get_update(uuid)?.metadata()?.len())
+    }
+
+    pub fn delete(&self, uuid: Uuid) -> Result<()> {
+        let path = self.path.join(uuid.to_string());
+        if let Err(e) = std::fs::remove_file(path) {
+            tracing::error!("Can't delete file {uuid}: {e}");
+            Err(e.into())
+        } else {
+            Ok(())
+        }
+    }
+
+    pub fn all_uuids(&self) -> Result<impl Iterator<Item = Result<Uuid>>> {
+        Ok(self.path.read_dir()?.filter_map(|entry| {
+            let file_name = match entry {
+                Ok(entry) => entry.file_name(),
+                Err(e) => return Some(Err(e.into())),
+            };
+            let file_name = match file_name.to_str() {
+                Some(file_name) => file_name,
+                None => return Some(Err(Error::CouldNotParseFileNameAsUtf8)),
+            };
+            if file_name.starts_with('.') {
+                None
+            } else {
+                Some(Uuid::from_str(file_name).map_err(|e| e.into()))
+            }
+        }))
     }
 }
