@@ -176,5 +176,16 @@ mod test {
         file.persist().unwrap();
         let all_uuids = fs.all_uuids().unwrap().collect::<Result<Vec<_>>>().unwrap();
         assert_eq!(all_uuids, vec![uuid]);
+
+        let (uuid2, file) = fs.new_update().unwrap();
+        let all_uuids = fs.all_uuids().unwrap().collect::<Result<Vec<_>>>().unwrap();
+        assert_eq!(all_uuids, vec![uuid]);
+
+        file.persist().unwrap();
+        let mut all_uuids = fs.all_uuids().unwrap().collect::<Result<Vec<_>>>().unwrap();
+        all_uuids.sort();
+        let mut expected = vec![uuid, uuid2];
+        expected.sort();
+        assert_eq!(all_uuids, expected);
     }
 }
