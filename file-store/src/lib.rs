@@ -48,4 +48,24 @@ impl FileStore {
 
         Ok((uuid, update_file))
     }
+
+    pub fn new_update_with_uuid(&self, uuid: u128) -> Result<(Uuid, File)> {
+        let file = NamedTempFile::new_in(&self.path)?;
+        let uuid = Uuid::from_u128(uuid);
+        let path = self.path.join(uuid.to_string());
+        let update_file = File {
+            file: Some(file),
+            path,
+        };
+
+        Ok((uuid, update_file))
+    }
+
+    pub fn get_update(&self, uuid: Uuid) -> Result<StdFile> {
+        let path = self.get_update_path(uuid);
+    }
+
+    pub fn get_update_path(&self, uuid: Uuid) -> PathBuf {
+        self.path.join(uuid.to_string())
+    }
 }
