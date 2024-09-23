@@ -35,3 +35,17 @@ impl FileStore {
         Ok(FileStore { path })
     }
 }
+
+impl FileStore {
+    pub fn new_update(&self) -> Result<(Uuid, File)> {
+        let file = NamedTempFile::new_in(&self.path)?;
+        let uuid = Uuid::new_v4();
+        let path = self.path.join(uuid.to_string());
+        let update_file = File {
+            file: Some(file),
+            path,
+        };
+
+        Ok((uuid, update_file))
+    }
+}
