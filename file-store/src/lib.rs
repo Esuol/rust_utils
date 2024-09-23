@@ -158,3 +158,23 @@ impl Write for File {
         }
     }
 }
+
+#[cfg(test)]
+mod test {
+    use std::io::Write;
+
+    use tempfile::TempDir;
+
+    use super::*;
+
+    #[test]
+    fn all_uuids() {
+        let dir = TempDir::new().unwrap();
+        let fs: FileStore = FileStore::new(dir.path()).unwrap();
+        let (uuid, file) = fs.new_update().unwrap();
+        file.write_all(b"Hello world").unwrap();
+        file.persist().unwrap();
+        let all_uuids = fs.all_uuids().unwrap().collect::<Result<Vec<_>>>().unwrap();
+        assert_eq!(all_uuids, vec![uuid]);
+    }
+}
