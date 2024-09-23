@@ -1,4 +1,4 @@
-use std::error;
+use std::{error, fs};
 use std::fs::File as StdFile;
 use std::io::Write;
 use std::path::{Path, PathBuf};
@@ -61,11 +61,28 @@ impl FileStore {
         Ok((uuid, update_file))
     }
 
-    pub fn get_update(&self, uuid: Uuid) -> Result<StdFile> {
-        let path = self.get_update_path(uuid);
-    }
-
     pub fn get_update_path(&self, uuid: Uuid) -> PathBuf {
         self.path.join(uuid.to_string())
+    }
+
+    pub fn get_update(&self, uuid: Uuid) -> Result<StdFile> {
+        let path = self.get_update_path(uuid);
+        let file = match StdFile::open(path) {
+            Ok(file) => file,
+            Err(e) => {
+                tracing::error!("Can't access update file {uuid}: {e}");
+                return Err(e.into());
+            }
+        };
+        Ok(file)
+    }
+
+    pub fn snapshot(&self, uuid: Uuid, dst: impl AsRef<Path>) -> Result<()> {
+        let src = self.path.join(uuid.to_string());
+        let mut dst = dst.as_ref().join(UPDATE_FILES_PATH);
+        std::fs::create_dir_all(&dst)?;
+        dst.push(uuid.to_string());
+        std::fs::copy(src, dst)?;
+        Ok(())
     }
 }
