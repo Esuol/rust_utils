@@ -20,3 +20,18 @@ pub enum Error {
     #[error(transparent)]
     UuidError(#[from] uuid::Error),
 }
+
+pub type Result<T> = std::result::Result<T, Error>;
+
+#[derive(Debug, Clone)]
+pub struct FileStore {
+    path: PathBuf,
+}
+
+impl FileStore {
+    pub fn new(path: impl AsRef<Path>) -> Result<FileStore> {
+        let path = path.as_ref().to_path_buf();
+        std::fs::create_dir_all(&path)?;
+        Ok(FileStore { path })
+    }
+}
