@@ -1,12 +1,14 @@
 [workspace]
 resolver = "2"
-members = ["file-store"]
+members = ["file-store", "flatten-serde-json"]
 
 [workspace.package]
 authors = ["Esuol <berlinenPlus@gmail.com>"]
 description = "A file store utils for the web"
 readme = "README.md"
 edition = "2021"
+
+[workspace.dependencies]
 
 [profile.release]
 codegen-units = 1
