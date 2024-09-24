@@ -1,22 +1,32 @@
-use std::path::Path;
+use file_store::{FileStore, Result};
+use std::io::Write;
 use tempfile::TempDir;
-use uuid::Uuid;
-use your_crate::FileStore; // 替换为实际的 crate 名称
 
-fn main() -> file_store::Result<()> {
-    // 创建一个临时目录作为文件存储路径
-    let temp_dir = TempDir::new()?;
-    println!("临时目录路径: {:?}", temp_dir.path());
-    let file_store = FileStore::new(temp_dir.path())?;
+fn main() -> Result<()> {
+    let dir = TempDir::new()?;
+    let fs = FileStore::new(dir.path())?;
 
-    // 创建一个新的更新文件
-    let (uuid, mut file) = file_store.new_update()?;
-
-    // 写入一些数据到文件中
-    file.write_all(b"Hello, world!")?;
-
-    // 持久化文件
+    // 创建第一个更新文件并写入内容
+    let (uuid, mut file) = fs.new_update()?;
+    file.write_all(b"Hello world")?;
     file.persist()?;
 
-    println!("Created new update file with UUID: {}", uuid);
+    // 获取所有 UUID 并进行断言
+    let all_uuids = fs.all_uuids()?.collect::<Result<Vec<_>>>()?;
+    assert_eq!(all_uuids, vec![uuid]);
+
+    // 创建第二个更新文件
+    let (uuid2, file) = fs.new_update()?;
+    let all_uuids = fs.all_uuids()?.collect::<Result<Vec<_>>>()?;
+    assert_eq!(all_uuids, vec![uuid]);
+
+    // 持久化第二个文件并再次获取所有 UUID
+    file.persist()?;
+    let mut all_uuids = fs.all_uuids()?.collect::<Result<Vec<_>>>()?;
+    all_uuids.sort();
+    let mut expected = vec![uuid, uuid2];
+    expected.sort();
+    assert_eq!(all_uuids, expected);
+
+    Ok(())
 }

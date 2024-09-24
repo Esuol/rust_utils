@@ -1,9 +1,7 @@
-use std::fmt::Result;
 use std::fs::File as StdFile;
 use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
-use std::{error, fs};
 
 use tempfile::NamedTempFile;
 use uuid::Uuid;
@@ -136,6 +134,7 @@ impl File {
     pub fn persist(self) -> Result<()> {
         if let Some(file) = self.file {
             file.persist(&self.path)?;
+            println!("Persisted file to {:?}", self.path);
         }
         Ok(())
     }
@@ -170,8 +169,8 @@ mod test {
     #[test]
     fn all_uuids() {
         let dir = TempDir::new().unwrap();
-        let fs: FileStore = FileStore::new(dir.path()).unwrap();
-        let (uuid, file) = fs.new_update().unwrap();
+        let fs = FileStore::new(dir.path()).unwrap();
+        let (uuid, mut file) = fs.new_update().unwrap();
         file.write_all(b"Hello world").unwrap();
         file.persist().unwrap();
         let all_uuids = fs.all_uuids().unwrap().collect::<Result<Vec<_>>>().unwrap();
