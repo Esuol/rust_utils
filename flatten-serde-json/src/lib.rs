@@ -120,13 +120,82 @@ mod tests {
             &flat,
             json!({
                 "a": {
-                  "b": "c",
-                  "d": "e",
-                  "f": "g"
+                "b": "c",
+                "d": "e",
+                "f": "g"
                 },
                 "a.b": "c",
                 "a.d": "e",
                 "a.f": "g"
+            })
+            .as_object()
+            .unwrap()
+        );
+    }
+
+    #[test]
+    fn flatten_array() {
+        let mut base: Value = json!({
+            "a": [
+                1,
+                "b",
+                [],
+                [{}],
+                { "b": "c" },
+                { "b": "d" },
+                { "b": "e" },
+            ]
+        });
+        let json = std::mem::take(base.as_object_mut().unwrap());
+        let flat = flatten(&json);
+
+        assert_eq!(
+            &flat,
+            json!({
+                "a": [1, "b"],
+                "a.b": ["c", "d", "e"],
+            })
+            .as_object()
+            .unwrap()
+        );
+
+        let mut base: Value = json!({
+            "a": [
+                42,
+                { "b": "c" },
+                { "b": "d" },
+                { "b": "e" },
+            ]
+        });
+        let json = std::mem::take(base.as_object_mut().unwrap());
+        let flat = flatten(&json);
+
+        assert_eq!(
+            &flat,
+            json!({
+                "a": [42],
+                "a.b": ["c", "d", "e"],
+            })
+            .as_object()
+            .unwrap()
+        );
+
+        let mut base: Value = json!({
+        "a": [
+            { "b": "c" },
+            { "b": "d" },
+            { "b": "e" },
+            null,
+        ]
+        });
+        let json = std::mem::take(base.as_object_mut().unwrap());
+        let flat = flatten(&json);
+
+        assert_eq!(
+            &flat,
+            json!({
+                "a": [null],
+                "a.b": ["c", "d", "e"],
             })
             .as_object()
             .unwrap()
