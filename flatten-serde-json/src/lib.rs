@@ -250,4 +250,33 @@ mod tests {
             .unwrap()
         );
     }
+
+    #[test]
+    fn flatten_nested_arrays() {
+        let mut base: Value = json!({
+        "a": [
+            ["b", "c"],
+            { "d": "e" },
+            ["f", "g"],
+            [
+                { "h": "i" },
+                { "d": "j" },
+            ],
+            ["k", "l"],
+        ]
+        });
+        let json = std::mem::take(base.as_object_mut().unwrap());
+        let flat = flatten(&json);
+
+        assert_eq!(
+            &flat,
+            json!({
+                "a": ["b", "c", "f", "g", "k", "l"],
+                "a.d": ["e", "j"],
+                "a.h": "i",
+            })
+            .as_object()
+            .unwrap()
+        );
+    }
 }
