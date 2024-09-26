@@ -97,4 +97,39 @@ mod tests {
 
         assert_eq!(flat, json);
     }
+
+    #[test]
+    fn flatten_object() {
+        let mut base: Value = json!({
+            "a": {
+                "b": "c",
+                "d": "e",
+                "f": "g"
+            }
+        });
+        let json = std::mem::take(base.as_object_mut().unwrap());
+        let flat = flatten(&json);
+
+        println!(
+            "got:\n{}\nexpected:\n{}\n",
+            serde_json::to_string_pretty(&flat).unwrap(),
+            serde_json::to_string_pretty(&json).unwrap()
+        );
+
+        assert_eq!(
+            &flat,
+            json!({
+                "a": {
+                  "b": "c",
+                  "d": "e",
+                  "f": "g"
+                },
+                "a.b": "c",
+                "a.d": "e",
+                "a.f": "g"
+            })
+            .as_object()
+            .unwrap()
+        );
+    }
 }
