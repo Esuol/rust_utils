@@ -8,6 +8,23 @@ pub fn flatten(json: &Map<String, Value>) -> Map<String, Value> {
     insert_object(&mut obj, None, json, &mut all_entries);
 }
 
+fn insert_array<'a>(
+    base_json: &mut Map<String, Value>,
+    base_key: &str,
+    array: &'a Vec<Value>,
+    all_entries: &mut Vec<(String, &'a Value)>,
+) {
+    for value in array {
+        if let Some(object) = value.as_object() {
+            insert_object(base_json, Some(base_key), object, all_entries);
+        } else if let Some(sub_array) = value.as_array() {
+            insert_array(base_json, base_key, sub_array, all_entries);
+        } else {
+            insert_value(base_json, base_key, value.clone(), true);
+        }
+    }
+}
+
 fn insert_value(
     base_json: &mut Map<String, Value>,
     key: &str,
