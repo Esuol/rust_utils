@@ -1,7 +1,5 @@
 #![doc = include_str!("../README.md")]
 
-use std::{array, fmt::format};
-
 use serde_json::{Map, Value};
 
 pub fn flatten(json: &Map<String, Value>) -> Map<String, Value> {
@@ -70,5 +68,33 @@ fn insert_value(
         base_json.insert(key.to_string(), Value::Array(vec![to_insert]));
     } else {
         base_json.insert(key.to_string(), to_insert);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use serde_json::json;
+
+    use super::*;
+
+    #[test]
+    fn no_flattening() {
+        let mut base: Value = json!({
+            "id": "212121",
+            "title": "Hello, World",
+            "release_date": 1553299200,
+            "genres": ["Action", "Adventure", "Sci-Fi"],
+        });
+
+        let json = std::mem::take(base.as_object_mut().unwrap());
+        let flat = flatten(&json);
+
+        println!(
+            "got:\n{}\nexpected:\n{}\n",
+            serde_json::to_string_pretty(&flat).unwrap(),
+            serde_json::to_string_pretty(&json).unwrap()
+        );
+
+        assert_eq!(flat, json);
     }
 }
