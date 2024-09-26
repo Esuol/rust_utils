@@ -8,6 +8,10 @@ pub fn flatten(json: &Map<String, Value>) -> Map<String, Value> {
     let mut obj = Map::new();
     let mut all_entries = vec![];
     insert_object(&mut obj, None, json, &mut all_entries);
+    for (key, old_val) in all_entries {
+        obj.entry(key).or_insert(old_val.clone());
+    }
+    obj
 }
 
 fn insert_object<'a>(
