@@ -225,4 +225,29 @@ mod tests {
             .unwrap()
         );
     }
+
+    #[test]
+    fn collision_with_array() {
+        let mut base: Value = json!({
+            "a": [
+                { "b": "c" },
+                { "b": "d", "c": "e" },
+                [35],
+            ],
+            "a.b": "f",
+        });
+        let json = std::mem::take(base.as_object_mut().unwrap());
+        let flat = flatten(&json);
+
+        assert_eq!(
+            &flat,
+            json!({
+                "a.b": ["c", "d", "f"],
+                "a.c": "e",
+                "a": [35]
+            })
+            .as_object()
+            .unwrap()
+        );
+    }
 }
