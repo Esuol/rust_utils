@@ -1,11 +1,32 @@
 #![doc = include_str!("../README.md")]
 
+use std::{array, fmt::format};
+
 use serde_json::{Map, Value};
 
 pub fn flatten(json: &Map<String, Value>) -> Map<String, Value> {
     let mut obj = Map::new();
     let mut all_entries = vec![];
     insert_object(&mut obj, None, json, &mut all_entries);
+}
+
+fn insert_object<'a>(
+    base_json: &mut Map<String, Value>,
+    base_key: Option<&str>,
+    object: &'a Map<String, Value>,
+    all_entries: &mut Vec<(String, &'a Value)>,
+) {
+    for (key, value) in object {
+        let new_key = base_key.map_or_else(|| key.clone(), |base_key| format!("{base_key}.{key}"));
+        all_entries.push((new_key.clone(), value));
+        if let Some(array) = value.as_array() {
+            insert_array(base_json, &new_key, array, all_entries);
+        } else if let Some(object) = value.as_object() {
+            insert_object(base_json, Some(&new_key), object, all_entries);
+        } else {
+            insert_value(base_json, &new_key, value.clone(), false);
+        }
+    }
 }
 
 fn insert_array<'a>(
