@@ -213,9 +213,6 @@ mod tests {
         let json = std::mem::take(base.as_object_mut().unwrap());
         let flat = flatten(&json);
 
-        // 模拟程序崩溃
-        std::process::exit(1);
-
         assert_eq!(
             &flat,
             json!({
