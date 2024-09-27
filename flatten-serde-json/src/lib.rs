@@ -313,4 +313,55 @@ mod tests {
             .unwrap()
         );
     }
+
+    #[test]
+    fn flatten_nested_values_keep_original_values() {
+        let mut base: Value = json!(
+            {
+                "tags": {
+                    "t1": "v1"
+                },
+                "prices": {
+                    "p1": [null],
+                    "p1000": {"tamo": {"le": {}}}
+                },
+                "kiki": [[]]
+            }
+        );
+        let json = std::mem::take(base.as_object_mut().unwrap());
+        let flat = flatten(&json);
+
+        println!("{}", serde_json::to_string_pretty(&flat).unwrap());
+
+        assert_eq!(
+            &flat,
+            json!({
+            "prices": {
+                "p1": [null],
+                "p1000": {
+                "tamo": {
+                    "le": {}
+                }
+                }
+            },
+            "prices.p1": [null],
+            "prices.p1000": {
+                "tamo": {
+                "le": {}
+                }
+            },
+            "prices.p1000.tamo": {
+                "le": {}
+            },
+            "prices.p1000.tamo.le": {},
+            "tags": {
+                "t1": "v1"
+            },
+            "tags.t1": "v1",
+            "kiki": [[]]
+            })
+            .as_object()
+            .unwrap()
+        )
+    }
 }
