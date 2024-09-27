@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["file-store", "flatten-serde-json"]
+members = ["file-store", "flatten-serde-json", "json-depth-checker"]
 
 [workspace.package]
 authors = ["Esuol <berlinenPlus@gmail.com>"]
