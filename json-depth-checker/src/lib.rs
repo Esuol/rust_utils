@@ -43,3 +43,13 @@ pub fn should_flatten_from_unchecked_slice(json: &[u8]) -> bool {
 
     false
 }
+
+pub fn should_flatten_from_value(json: &Value) -> bool {
+    match json {
+        Value::Object(..) => true,
+        Value::Array(array) => array
+            .iter()
+            .any(|value| value.is_array() || value.is_object()),
+        _ => false,
+    }
+}
