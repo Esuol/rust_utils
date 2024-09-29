@@ -79,4 +79,19 @@ mod tests {
             assert!(!should_flatten_from_unchecked_slice(&value));
         }
     }
+
+    #[test]
+    fn test_should_flatten() {
+        let should_flatten = vec![
+            json!({}),
+            json!({ "hello": "world" }),
+            json!(["hello", ["world"]]),
+            json!([true, true, true, true, true, true, true, true, true, {}]),
+        ];
+        for value in should_flatten {
+            assert!(should_flatten_from_value(&value));
+            let value = serde_json::to_vec(&value).unwrap();
+            assert!(should_flatten_from_unchecked_slice(&value));
+        }
+    }
 }
