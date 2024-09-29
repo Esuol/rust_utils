@@ -277,6 +277,10 @@ dependencies = [
 [[package]]
 name = "json-depth-checker"
 version = "0.1.0"
+dependencies = [
+ "criterion",
+ "serde_json",
+]
 
 [[package]]
 name = "libc"
