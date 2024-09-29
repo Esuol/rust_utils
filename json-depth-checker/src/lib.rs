@@ -53,3 +53,30 @@ pub fn should_flatten_from_value(json: &Value) -> bool {
         _ => false,
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use serde_json::*;
+
+    use super::*;
+
+    #[test]
+    fn test_shouldnt_flatteb() {
+        let shouldnt_flatten = vec![
+            json!(null),
+            json!(true),
+            json!(false),
+            json!("a superb string"),
+            json!("a string escaping other \"string\""),
+            json!([null, true, false]),
+            json!(["hello", "world", "!"]),
+            json!(["a \"string\" escaping 'an other'", "\"[\"", "\"{\""]),
+        ];
+
+        for value in shouldnt_flatten {
+            assert!(!should_flatten_from_value(&value));
+            let value = serde_json::to_vec(&value).unwrap();
+            assert!(!should_flatten_from_unchecked_slice(&value));
+        }
+    }
+}
