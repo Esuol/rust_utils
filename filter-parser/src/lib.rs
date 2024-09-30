@@ -1,14 +1,7 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
-}
+use std::fmt::Error;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+use nom_locate::LocatedSpan;
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}
+pub type Span<'a> = LocatedSpan<&'a str, &'a str>;
+
+type IResult<'a, Ret> = nom::IResult<Span<'a>, Ret, Error<'a>>;
