@@ -1,8 +1,15 @@
 [workspace]
 resolver = "2"
-members = ["file-store", "flatten-serde-json", "json-depth-checker"]
+members = [
+  "file-store",
+  "filter-parser",
+  "flatten-serde-json",
+  "json-depth-checker",
+]
 
 [workspace.package]
+version = "0.1.0"
+homepage = "https://github.com/Esuol/rust_utils.git"
 authors = ["Esuol <berlinenPlus@gmail.com>"]
 description = "A file store utils for the web"
 readme = "README.md"

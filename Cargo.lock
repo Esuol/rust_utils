@@ -205,6 +205,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "filter-parser"
+version = "0.1.0"
+
+[[package]]
 name = "flatten-serde-json"
 version = "0.1.0"
 dependencies = [
