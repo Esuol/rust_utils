@@ -30,3 +30,14 @@ impl<E> NomErrorExt<E> for nom::Err<E> {
         }
     }
 }
+
+/// cut a parser and map the error
+pub fn cut_with_err<'a, O>(
+    mut parser: impl FnMut(Span<'a>) -> IResult<'a, O>,
+    mut with: impl FnMut(Error<'a>) -> Error<'a>,
+) -> impl FnMut(Span<'a>) -> IResult<O> {
+    move |input| match parser.parse(input) {
+        Err(nom::Err::Error(e)) => Err(nom::Err::Failure(with(e))),
+        rest => rest,
+    }
+}
