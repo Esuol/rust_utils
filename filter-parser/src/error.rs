@@ -77,3 +77,13 @@ pub enum ErrorKind<'a> {
     DepthLimitReached,
     External(String),
 }
+
+impl<'a> Error<'a> {
+    pub fn kind(&self) -> &ErrorKind<'a> {
+        &self.kind
+    }
+
+    pub fn context(&self) -> &Span<'a> {
+        &self.context
+    }
+}
