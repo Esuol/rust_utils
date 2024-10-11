@@ -41,3 +41,39 @@ pub fn cut_with_err<'a, O>(
         rest => rest,
     }
 }
+
+#[derive(Debug)]
+pub struct Error<'a> {
+    context: Span<'a>,
+    kind: ErrorKind<'a>,
+}
+
+#[derive(Debug)]
+pub enum ExpectedValueKind {
+    ReservedKeyword,
+    Other,
+}
+
+#[derive(Debug)]
+pub enum ErrorKind<'a> {
+    ReservedGeo(&'a str),
+    GeoRadius,
+    GeoBoundingBox,
+    MisusedGeoRadius,
+    MisusedGeoBoundingBox,
+    InvalidPrimary,
+    InvalidEscapedNumber,
+    ExpectedEof,
+    ExpectedValue(ExpectedValueKind),
+    MalformedValue,
+    InOpeningBracket,
+    InClosingBracket,
+    NonFiniteFloat,
+    InExpectedValue(ExpectedValueKind),
+    ReservedKeyword(String),
+    MissingClosingDelimiter(char),
+    Char(char),
+    InternalError(error::ErrorKind),
+    DepthLimitReached,
+    External(String),
+}
