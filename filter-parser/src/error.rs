@@ -86,4 +86,19 @@ impl<'a> Error<'a> {
     pub fn context(&self) -> &Span<'a> {
         &self.context
     }
+
+    pub fn new_from_kind(context: Span<'a>, kind: ErrorKind<'a>) -> Self {
+        Self { context, kind }
+    }
+
+    pub fn new_from_external(context: Span<'a>, error: impl std::error::Error) -> Self {
+        Self::new_from_kind(context, ErrorKind::External(error.to_string()))
+    }
+
+    pub fn char(self) -> char {
+        match self.kind {
+            ErrorKind::Char(c) => c,
+            error => panic!("Internal filter parser error: {:?}", error),
+        }
+    }
 }
