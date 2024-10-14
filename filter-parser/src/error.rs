@@ -127,7 +127,7 @@ impl<'a> ParseError<Span<'a>> for Error<'a> {
     }
 }
 
-impl<'a> Display for Error<'a> {
+
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let input = self.context.fragment();
         // When printing our error message we want to escape all `\n` to be sure we keep our format with the
