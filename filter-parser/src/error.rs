@@ -103,4 +103,26 @@ impl<'a> Error<'a> {
     }
 }
 
+impl<'a> ParseError<Span<'a>> for Error<'a> {
+    fn from_error_kind(input: Span<'a>, kind: error::ErrorKind) -> Self {
+        let kind = match kind {
+            error::ErrorKind::Eof => ErrorKind::ExpectedEof,
+            kind => ErrorKind::InternalError(kind),
+        };
+        Self {
+            context: input,
+            kind,
+        }
+    }
 
+    fn append(_input: Span<'a>, _kind: error::ErrorKind, other: Self) -> Self {
+        other
+    }
+
+    fn from_char(input: Span<'a>, c: char) -> Self {
+        Self {
+            context: input,
+            kind: ErrorKind::Char(c),
+        }
+    }
+}
