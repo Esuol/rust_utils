@@ -113,3 +113,19 @@ pub fn word_exact<'a, 'b: 'a>(tag: &'b str) -> impl Fn(Span<'a>) -> IResult<'a, 
         }
     }
 }
+
+// word           = {tag}
+pub fn word_exact<'a, 'b: 'a>(tag: &'b str) -> impl Fn(Span<'a>) -> IResult<'a, Token<'a>> {
+    move |input| {
+        let (input, word): (_, Token<'a>) =
+            take_while1(is_value_component)(input).map(|(s, t)| (s, t.into()))?;
+        if word.value() == tag {
+            Ok((input, word))
+        } else {
+            Err(nom::Err::Error(Error::new_from_kind(
+                input,
+                ErrorKind::InternalError(nom::error::ErrorKind::Tag),
+            )))
+        }
+    }
+}
