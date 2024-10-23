@@ -205,3 +205,8 @@ fn quoted_by(quote: char, input: Span) -> IResult<Token> {
         // if it was preceded by a `\` or if it was anything else we can continue to advance
     }
 }
+
+fn unescape(buf: Span, char_to_escape: char) -> String {
+    let to_escape = format!("\\{}", char_to_escape);
+    buf.replace(&to_escape, &char_to_escape.to_string())
+}
