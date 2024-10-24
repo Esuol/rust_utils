@@ -238,3 +238,7 @@ fn is_keyword(s: &str) -> bool {
 fn is_value_component(c: char) -> bool {
     c.is_alphanumeric() || c == '_' || c == '-' || c == '.'
 }
+
+fn is_value_component(c: char) -> bool {
+    c.is_alphanumeric() || c == '_' || c == '-' || c == '.'
+}
