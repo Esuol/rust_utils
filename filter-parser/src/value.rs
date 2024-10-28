@@ -257,3 +257,38 @@ pub fn word_exact<'a, 'b: 'a>(tag: &'b str) -> impl Fn(Span<'a>) -> IResult<'a, 
         }
     }
 }
+
+fn quoted_by(quote: char, input: Span) -> IResult<Token> {
+    // empty fields / values are valid in json
+    if input.is_empty() {
+        return Ok((input.slice(input.input_len()..), input.into()));
+    }
+
+    let mut escaped = false;
+    let mut i = input.iter_indices();
+
+    while let Some((idx, c)) = i.next() {
+        if c == quote {
+            let (rem, output) = input.take_split(idx);
+            return Ok((
+                rem,
+                Token::new(output, escaped.then(|| unescape(output, quote))),
+            ));
+        } else if c == '\\' {
+            if let Some((_, c)) = i.next() {
+                escaped |= c == quote;
+            } else {
+                return Err(nom::Err::Error(Error::new_from_kind(
+                    input,
+                    ErrorKind::MalformedValue,
+                )));
+            }
+        }
+        // if it was preceded by a `\` or if it was anything else we can continue to advance
+    }
+
+    Ok((
+        input.slice(input.input_len()..),
+        Token::new(input, escaped.then(|| unescape(input, quote))),
+    ))
+}
