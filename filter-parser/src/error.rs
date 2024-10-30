@@ -31,6 +31,26 @@ impl<E> NomErrorExt<E> for nom::Err<E> {
     }
 }
 
+impl<E> NomErrorExt<E> for nom::Err<E> {
+    fn is_failure(&self) -> bool {
+        matches!(self, Self::Failure(_))
+    }
+
+    fn map_err<O: FnOnce(E) -> E>(self, op: O) -> nom::Err<E> {
+        match self {
+            e @ Self::Failure(_) => e,
+            e => e.map(op),
+        }
+    }
+
+    fn map_fail<O: FnOnce(E) -> E>(self, op: O) -> nom::Err<E> {
+        match self {
+            e @ Self::Error(_) => e,
+            e => e.map(op),
+        }
+    }
+}
+
 /// cut a parser and map the error
 pub fn cut_with_err<'a, O>(
     mut parser: impl FnMut(Span<'a>) -> IResult<'a, O>,
@@ -310,6 +330,3 @@ impl<'a> Display for Error<'a> {
         )
     }
 }
-
-
-
