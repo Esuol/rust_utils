@@ -404,7 +404,27 @@ mpl<E> NomErrorExt<E> for nom::Err<E> {
 }
 
 
-mpl<E> NomErrorExt<E> for nom::Err<E> {
+impl<E> NomErrorExt<E> for nom::Err<E> {
+  fn is_failure(&self) -> bool {
+      matches!(self, Self::Failure(_))
+  }
+
+  fn map_err<O: FnOnce(E) -> E>(self, op: O) -> nom::Err<E> {
+      match self {
+          e @ Self::Failure(_) => e,
+          e => e.map(op),
+      }
+  }
+
+  fn map_fail<O: FnOnce(E) -> E>(self, op: O) -> nom::Err<E> {
+      match self {
+          e @ Self::Error(_) => e,
+          e => e.map(op),
+      }
+  }
+}
+
+impl<E> NomErrorExt<E> for nom::Err<E> {
   fn is_failure(&self) -> bool {
       matches!(self, Self::Failure(_))
   }
