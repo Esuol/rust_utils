@@ -3,7 +3,7 @@ resolver = "2"
 members = [
   "file-store",
   "filter-parser",
-  "flatten-serde-json",
+  "flatten-serde-json", "imagebuffer",
   "json-depth-checker", "zig",
 ]
 
