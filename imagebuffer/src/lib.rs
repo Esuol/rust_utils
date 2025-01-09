@@ -1,3 +1,9 @@
+mod error;
+
+use error::InitError;
+pub use error::SoftBufferError;
+use std::num::NonZeroU32;
+
 /// A rectangular region of the buffer coordinate space.
 #[derive(Clone, Copy, Debug)]
 pub struct Rect {
