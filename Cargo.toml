@@ -4,7 +4,7 @@ members = [
   "file-store",
   "filter-parser",
   "flatten-serde-json",
-  "json-depth-checker",
+  "json-depth-checker", "zig",
 ]
 
 [workspace.package]
