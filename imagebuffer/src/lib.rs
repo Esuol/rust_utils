@@ -1,14 +1,12 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+/// A rectangular region of the buffer coordinate space.
+#[derive(Clone, Copy, Debug)]
+pub struct Rect {
+    /// x coordinate of top left corner
+    pub x: u32,
+    /// y coordinate of top left corner
+    pub y: u32,
+    /// width
+    pub width: NonZeroU32,
+    /// height
+    pub height: NonZeroU32,
 }

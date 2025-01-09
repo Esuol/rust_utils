@@ -10,3 +10,11 @@ edition.workspace = true
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+raw_window_handle = { package = "raw-window-handle", version = "0.6", features = [
+  "std",
+] }
+tracing = { version = "0.1.41", default-features = false }
+
+[target.'cfg(target_os = "android")'.dependencies]
+bytemuck = "1.12.3"
+ndk = "0.9.0"
