@@ -158,3 +158,17 @@ impl From<HandleError> for SoftBufferError {
         Self::RawWindowHandle(err)
     }
 }
+
+pub(crate) enum InitError<D> {
+    /// Failed to initialize.
+    Failure(SoftBufferError),
+
+    /// Cannot initialize this handle on this platform.
+    Unsupported(D),
+}
+
+impl<T> From<SoftBufferError> for InitError<T> {
+    fn from(err: SoftBufferError) -> Self {
+        Self::Failure(err)
+    }
+}
