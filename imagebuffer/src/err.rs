@@ -152,3 +152,9 @@ impl std::error::Error for SoftBufferError {
         }
     }
 }
+
+impl From<HandleError> for SoftBufferError {
+    fn from(err: HandleError) -> Self {
+        Self::RawWindowHandle(err)
+    }
+}
