@@ -38,3 +38,25 @@ impl EventManager {
         }
     }
 }
+
+pub struct ImageLoader;
+
+impl Observer for ImageLoader {
+    fn on_notify(&self, event: &Event) {
+        match event {
+            Event::ImageLoaded => println!("ImageLoader: Image has been loaded."),
+            Event::ImageProcessed => println!("ImageLoader: Image has been processed."),
+        }
+    }
+}
+
+pub struct ImageProcessor;
+
+impl Observer for ImageProcessor {
+    fn on_notify(&self, event: &Event) {
+        match event {
+            Event::ImageLoaded => println!("ImageProcessor: Image has been loaded."),
+            Event::ImageProcessed => println!("ImageProcessor: Image has been processed."),
+        }
+    }
+}
