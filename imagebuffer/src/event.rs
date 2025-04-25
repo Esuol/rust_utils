@@ -326,3 +326,16 @@ fn main() {
     event_manager.notify(&Event::ImageLoaded);
     event_manager.notify(&Event::ImageProcessed);
 }
+
+fn main() {
+    let mut event_manager = EventManager::new();
+
+    let image_loader = Arc::new(Mutex::new(ImageLoader));
+    let image_processor = Arc::new(Mutex::new(ImageProcessor));
+
+    event_manager.subscribe(Event::ImageLoaded, image_loader.clone());
+    event_manager.subscribe(Event::ImageProcessed, image_processor.clone());
+
+    event_manager.notify(&Event::ImageLoaded);
+    event_manager.notify(&Event::ImageProcessed);
+}
