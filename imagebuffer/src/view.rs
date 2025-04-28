@@ -46,3 +46,20 @@ impl View {
         self.data.fill(value);
     }
 }
+
+fn main() {
+    // 创建一个 10x10 的视图
+    let mut view = View::new(10, 10);
+
+    // 更新某个像素
+    view.update_pixel(5, 5, 255);
+
+    // 打印视图的宽度和高度
+    println!("Width: {}, Height: {}", view.width(), view.height());
+
+    // 清空视图
+    view.clear(0);
+
+    // 打印视图数据
+    println!("Data: {:?}", view.data());
+}
