@@ -30,3 +30,23 @@ impl<T> Stack<T> {
         self.elements.len()
     }
 }
+
+fn main() {
+    let mut stack = Stack::new();
+
+    // 向栈中添加元素
+    stack.push(1);
+    stack.push(2);
+    stack.push(3);
+
+    // 打印栈的大小
+    println!("Stack size: {}", stack.size());
+
+    // 弹出元素
+    if let Some(value) = stack.pop() {
+        println!("Popped value: {}", value);
+    }
+
+    // 检查栈是否为空
+    println!("Is stack empty? {}", stack.is_empty());
+}
