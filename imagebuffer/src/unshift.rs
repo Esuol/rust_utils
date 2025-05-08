@@ -20,3 +20,15 @@ impl<T> List<T> {
         &self.elements
     }
 }
+
+fn main() {
+    let mut list = List::new();
+
+    // 在列表开头插入元素
+    list.unshift(10);
+    list.unshift(20);
+    list.unshift(30);
+
+    // 打印列表的内容
+    println!("{:?}", list.elements()); // 输出: [30, 20, 10]
+}
